@@ -9,16 +9,25 @@ def distance(x,y):
 
 def split_data(data, ratio):
     #ratio is a decimal value that is the proportion that training data should make up
-    number_data_points_training = int(ration * len(data))
+    number_data_points_training = int(ratio * len(data))
     #points were generated at random so we don't have to sample randomly from data
     training_data = data[:number_data_points_training]
     testing_data = data[number_data_points_training:]
     return (training_data, testing_data)
 
-def find_most_common(counts_dict):
+def find_most_common(list):
     #will return the most common element from a dictionary of counts for each class
     #Example input: a = {'blue': 1, 'green': 2, 'yellow': 0, 'red': 10, 'purple': 1} -> 'red'
-    return max(counts_dict, key=lambda x: a[x])
+    counts_dict = {}
+
+    #constuct a dictionary of counts
+    for i in range(len(list)):
+        if list[i] not in counts_dict:
+            counts_dict[list[i]] = 1
+        else:
+            counts_dict[list[i]] += 1
+
+    return max(counts_dict, key=lambda x: counts_dict[x])
 
 
 def classify_KNN(point, training_data, k):
@@ -32,6 +41,7 @@ def classify_KNN(point, training_data, k):
         #calculate the distance for the point
         data_point = training_data[i][1]
         dist = distance(point, data_point)
+        training_data[i] = training_data[i] + [dist]
 
     #sort the element with key being distance
     training_data = sorted(training_data, key=lambda x: x[2])
@@ -62,11 +72,11 @@ def main():
         json_string = input_file.read()
         raw_data = json.loads(json_string)
     except json.decoder.JSONDecodeError as err:
-        raw_data = [[]]
         print('no data')
+        sys.exit(0)
 
     #we want to split the data into trianing and testing
-    ratio = int(input("What ratio of training data do you want (0 to 1): "))
+    ratio = float(input("What ratio of training data do you want (0 to 1): "))
     training_data, testing_data = split_data(raw_data, ratio)
     #choose between classifying a new point or testing on the testing_data
     choice = input("Do you want to classify, test, or done: ").upper()
@@ -77,6 +87,7 @@ def main():
     elif choice == "TEST":
         number_neighbors = int(input("What should k be: "))
         print(test(testing_data, training_data, number_neighbors))
+        main()
     elif choice == "DONE":
         print("Great!")
     else:

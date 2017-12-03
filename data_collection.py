@@ -22,7 +22,7 @@ def main():
             patches.Rectangle((0,0), 1, 1, color=rgb)
         )
         plt.show(block=False)
-        answer = input('Color: ').upper()
+        answer = input('Color (' + str(len(data)) + "): ").upper()
 
         if answer == "DONE":
             break
