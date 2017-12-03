@@ -27,7 +27,7 @@ def main():
         if answer == "DONE":
             break
         else:
-            data += [[answer, rgb]]
+            data += [[answer, convert_to_rgb(rgb)]]
         plt.close()
 
     output_file = open('data.txt', 'a')
