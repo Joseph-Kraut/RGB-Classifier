@@ -24,7 +24,7 @@ def main():
         plt.show(block=False)
         answer = input('Color: ').upper()
 
-        if answer == "DONE  ":
+        if answer == "DONE":
             break
         else:
             data += [[answer, rgb]]
