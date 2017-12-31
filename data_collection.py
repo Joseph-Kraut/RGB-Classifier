@@ -1,7 +1,11 @@
+"""
+    Allows a user to classify colors as labeled data, will rewrite data.csv to store this
+"""
+
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import random
-import json
+import pandas as pd
 
 def generate_random_rgb():
     """Returns a tuple of three RGB values on range [0,1]"""
@@ -13,6 +17,8 @@ def convert_to_rgb(input):
 
 def main():
     data = []
+    red, green, blue, label = [], [], [], []
+    counter = 0
     #we want to start a loop that puts up a rect of a random rgb and then asks user for class
     while True:
         rgb = generate_random_rgb()
@@ -22,16 +28,23 @@ def main():
             patches.Rectangle((0,0), 1, 1, color=rgb)
         )
         plt.show(block=False)
-        answer = input('Color (' + str(len(data)) + "): ").upper()
+        answer = input('Color (' + str(counter) + "): ").upper()
 
         if answer == "DONE":
             break
         else:
-            data += [[answer, convert_to_rgb(rgb)]]
+            label += [answer]
+            converted = convert_to_rgb(rgb)
+            red += [converted[0]]
+            green += [converted[1]]
+            blue += [converted[2]]
         plt.close()
+        count += 1
 
-    output_file = open('data.txt', 'a')
-    json.dump(data, output_file)
+    data = {'red': red, 'green': green, 'blue': blue, 'label': label}
+    df = pd.DataFrame(data=data)
+    df.to_csv('data.csv', index=False)
+    print('Done!')
 
 
 if __name__ == '__main__':
