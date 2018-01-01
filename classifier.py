@@ -49,13 +49,16 @@ def parse_data_point(string):
     return (red, green, blue)
 
 def test(test_data, training_data, k):
+    #the length of the test_data
+    length = test_data.shape[0]
     results = 0 #this will be a sum of the positive results we will divide it by length later
-    for i in range(len(test_data)):
-        classification = classify_KNN(test_data[i][1], training_data, k)
-        if classification.upper() == test_data[i][0]:
+    for i in range(length):
+        rgb_values = list(test_data.loc[i])[:3]
+        classification = classify_KNN(rgb_values, training_data, k)
+        if classification.upper() == test_data.loc[i].label:
             results += 1
 
-    return results / len(test_data)
+    return results / length
 
 def main():
     #first step is to load the data
@@ -66,6 +69,10 @@ def main():
     #we want to split the data into trianing and testing
     ratio = float(input("What ratio of training data do you want (0 to 1): "))
     training_data, testing_data = split_data(raw_data, ratio)
+
+    #reset the indexing so we can index into the data from 0
+    training_data = training_data.reset_index(drop=True)
+    testing_data = testing_data.reset_index(drop=True)
     #choose between classifying a new point or testing on the testing_data
     choice = input("Do you want to classify, test, or done: ").upper()
     if choice == "CLASSIFY":
