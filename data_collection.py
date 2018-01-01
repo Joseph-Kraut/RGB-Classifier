@@ -39,7 +39,7 @@ def main():
             green += [converted[1]]
             blue += [converted[2]]
         plt.close()
-        count += 1
+        counter += 1
 
     data = {'red': red, 'green': green, 'blue': blue, 'label': label}
     df = pd.DataFrame(data=data)

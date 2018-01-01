@@ -1,4 +1,4 @@
-import json
+import pandas as pd
 import sys
 
 def distance(x,y):
@@ -31,22 +31,15 @@ def find_most_common(list):
 
 
 def classify_KNN(point, training_data, k):
+    #apply the distance function to each point in training data
+    distances = []
 
-    #add the distances to each element of the training_data
+    for i in range(training_data.shape[0]):
+        distances += [distance(point, list(training_data.loc[i])[:3])]
 
-    #creates a list of size k of all max ints
-    k_closest = [sys.maxsize] * k
-
-    for i in range(len(training_data)):
-        #calculate the distance for the point
-        data_point = training_data[i][1]
-        dist = distance(point, data_point)
-        training_data[i] = training_data[i] + [dist]
-
-    #sort the element with key being distance
-    training_data = sorted(training_data, key=lambda x: x[2])
-    classification = find_most_common([x[0] for x in training_data][:k])
-    return classification
+    training_data.loc[:, 'distance'] = distances
+    training_data = training_data.sort_values('distance')
+    return find_most_common(training_data[:k].label.tolist())
 
 def parse_data_point(string):
     """(1,2,3)"""
@@ -67,14 +60,9 @@ def test(test_data, training_data, k):
 def main():
     #first step is to load the data
     #try catch loop for catching an empty data file
-    try:
-        input_file = open('data.txt', 'r')
-        json_string = input_file.read()
-        raw_data = json.loads(json_string)
-    except json.decoder.JSONDecodeError as err:
-        print('no data')
-        sys.exit(0)
-
+    raw_data = pd.read_csv("data.csv")
+    #reorganize the columns
+    raw_data = raw_data[['red', 'green', 'blue', 'label']]
     #we want to split the data into trianing and testing
     ratio = float(input("What ratio of training data do you want (0 to 1): "))
     training_data, testing_data = split_data(raw_data, ratio)
